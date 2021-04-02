@@ -1,38 +1,37 @@
-
 interface Persistable<T = string> {
-    /**
-     * ID of the entity
-     */
-    id: T;
-    /**
-     * Created at -timestamp
-     */
-    createdAt: Date;
+  /**
+  * ID of the entity
+  */
+  id: T;
+  /**
+   * Created at -timestamp
+   */
+  createdAt: Date;
 }
 
 interface Updateable<T = string> extends Persistable<T> {
-    /**
-     * Updated at -timestamp
-     */
-    updatedAt: Date;
+  /**
+   * Updated at -timestamp
+   */
+  updatedAt: Date;
 }
 
 export interface User {
-    /**
-     * Name of the user
-     */
-    username: string;
+  /**
+   * Name of the user
+   */
+  username: string;
 }
 
 export interface Todo {
-    /**
-     * Description of the todo item
-     */
-    description: string;
-    /**
-     * Is the item completed?
-     */
-    completed: boolean;
+  /**
+   * Description of the todo item
+   */
+  description: string;
+  /**
+   * Is the item completed?
+   */
+  completed: boolean;
 }
 
 /**
@@ -44,5 +43,3 @@ export type PersistedUser = User & Persistable;
  * Persisted todo entity
  */
 export type PersistedTodo = Todo & Updateable;
-
-

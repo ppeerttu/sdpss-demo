@@ -1,6 +1,6 @@
 import { Router } from "../deps.ts";
 import { getTodos } from "./controllers/todo-controller.ts";
-import { getUsers, authenticate } from "./controllers/users-controller.ts";
+import { authenticate, getUsers } from "./controllers/users-controller.ts";
 
 export const router = new Router();
 
@@ -12,4 +12,3 @@ router.get("/api/users", getUsers);
 
 // Auth
 router.post("/api/authenticate", authenticate);
-
