@@ -1,13 +1,17 @@
-import { RouterMiddleware } from "../../deps.ts";
-import { listTodos, createTodo } from "../../repository.ts";
+import { RouterMiddleware, RouteParams } from "../../deps.ts";
+import { listTodos, createTodo, deleteTodo as removeTodo, completeTodo } from "../../repository.ts";
 import { validate } from "../../lib/validator.ts";
+import { Session } from "../../lib/session.ts";
+import { log } from "../../lib/log.ts";
 
-export const getTodos: RouterMiddleware = async (ctx) => {
-  const todos = await listTodos();
+const logger = log.getLogger();
+
+export const getTodos: RouterMiddleware<RouteParams, { session: Session }> = async (ctx) => {
+  const todos = await listTodos(ctx.state.session.userId);
   ctx.response.body = todos;
 };
 
-export const postTodo: RouterMiddleware = async (ctx) => {
+export const postTodo: RouterMiddleware<RouteParams, { session: Session }> = async (ctx) => {
   const valid = await validate(ctx, [{ key: "description", type: "string" }]);
   if (!valid) {
     ctx.response.status = 422;
@@ -15,4 +19,34 @@ export const postTodo: RouterMiddleware = async (ctx) => {
     return;
   }
   const body = await ctx.request.body({ type: "json" }).value;
+  const todo = await createTodo(body.description, ctx.state.session.userId);
+  ctx.response.status = 201;
+  ctx.response.body = todo;
+}
+
+export const deleteTodo: RouterMiddleware<RouteParams, { session: Session }> = async (ctx) => {
+  const todoId = ctx.params.todoId as string;
+  // In reality we would check if this user has access to the todo, but let's ignore that for now...
+  await removeTodo(todoId);
+  ctx.response.status = 204;
+}
+
+export const updateTodo: RouterMiddleware = async (ctx) => {
+  const valid = await validate(ctx, [{ key: "completed", type: "boolean" }]);
+  const todoId = ctx.params.todoId as string;
+  // In reality we would check if this user has access to the todo, but let's ignore that for now...
+  const body = await ctx.request.body({ type: "json" }).value;
+  const completed = body.completed as boolean;
+  const updated = await completeTodo(todoId, completed);
+
+  if (!updated) {
+    ctx.response.status = 404;
+    ctx.response.body = {
+      message: `No todo found with id ${todoId}`
+    };
+    return;
+  }
+
+  ctx.response.status = 200;
+  ctx.response.body = updated;
 }

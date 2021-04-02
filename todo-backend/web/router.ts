@@ -1,14 +1,18 @@
 import { Router } from "../deps.ts";
-import { getTodos } from "./controllers/todo-controller.ts";
-import { authenticate, signOut, getUsers } from "./controllers/users-controller.ts";
+import { getTodos, postTodo, deleteTodo, updateTodo } from "./controllers/todo-controller.ts";
+import { authenticate, signOut, getMe, deleteMe } from "./controllers/users-controller.ts";
 
 export const router = new Router();
 
 // Todos
 router.get("/api/todos", getTodos);
+router.post("/api/todos", postTodo);
+router.delete("/api/todos/:todoId", deleteTodo);
+router.put("/api/todos/:todoId", updateTodo);
 
 // Users
-router.get("/api/users", getUsers);
+router.get("/api/users/me", getMe);
+router.delete("/api/users/me", deleteMe);
 
 // Auth
 router.post("/auth/sign-in", authenticate);
