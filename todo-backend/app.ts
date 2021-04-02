@@ -2,6 +2,7 @@ import { Application } from "./deps.ts";
 import { log } from "./lib/log.ts";
 
 import { router } from "./web/router.ts";
+import { sessionMiddleware } from "./middleware/session.ts";
 
 const logger = log.getLogger();
 
@@ -23,6 +24,11 @@ app.use(async (ctx, next) => {
     logger.error("Uncaught exception", e);
   }
 });
+
+app.use(sessionMiddleware({
+  excludeStartsWith: ["/auth"]
+}));
+
 
 app.use(router.routes());
 app.use(router.allowedMethods());

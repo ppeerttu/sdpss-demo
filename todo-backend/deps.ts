@@ -6,6 +6,8 @@ export { Application, Router } from "https://deno.land/x/oak@v6.5.0/mod.ts";
 export type {
   RouterContext,
   RouterMiddleware,
+  Middleware,
 } from "https://deno.land/x/oak@v6.5.0/mod.ts";
 export * as log from "https://deno.land/std@0.91.0/log/mod.ts";
 export { Client } from "https://deno.land/x/postgres@@v0.8.0/mod.ts";
+export { v4 as uuidv4 } from "https://deno.land/std@0.91.0/uuid/mod.ts";
