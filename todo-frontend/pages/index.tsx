@@ -1,34 +1,25 @@
-import { Container, makeStyles } from "@material-ui/core";
-import { TodoInput } from "./components/TodoInput";
-import { TodoList } from "./components/TodoList";
+import { Container } from "@material-ui/core";
+import { useEffect } from "react";
 import { useAppState } from "../state";
+import { OverlaySpinner } from "./components/OverlaySpinner";
 import { SignInForm } from "./components/SignInForm";
-
-const useStyles = makeStyles((theme) => ({
-  paper: {
-    marginTop: theme.spacing(8),
-    display: "flex",
-    flexDirection: "column",
-    alignItems: "center",
-  },
-}));
+import { Todos } from "./components/Todos";
 
 export default function Home() {
-  const styles = useStyles();
-  const { user } = useAppState();
+  const { authPending, user, getMe } = useAppState();
+
+  useEffect(() => {
+    getMe().catch(console.error);
+  }, []);
+
   return (
-    <div>
-      <Container component="main" maxWidth="xs">
-        {user ? (
-          <div className={styles.paper}>
-            <h1>Todos</h1>
-            <TodoInput />
-            <TodoList />
-          </div>
-        ) : (
-          <SignInForm />
-        )}
-      </Container>
-    </div>
+    <>
+      <OverlaySpinner render={authPending} />
+      <div>
+        <Container component="main" maxWidth="xs">
+          {user ? <Todos /> : <SignInForm />}
+        </Container>
+      </div>
+    </>
   );
 }

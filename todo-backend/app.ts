@@ -25,12 +25,14 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(sessionMiddleware({
-  excludeStartsWith: ["/auth"]
+app.use(oakCors({
+  origin: "http://localhost:3000",
+  credentials: true,
 }));
 
-app.use(oakCors({
-  origin: "http://localhost:3000"
+app.use(sessionMiddleware({
+  excludeStartsWith: ["/auth"],
+  ignoreCors: true,
 }));
 
 app.use(router.routes());

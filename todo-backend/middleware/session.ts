@@ -20,12 +20,16 @@ export const requireSession: Middleware = async (ctx, next) => {
 interface SessionMiddlewareOptions {
   includeStartsWith?: string[];
   excludeStartsWith?: string[];
+  ignoreCors?: boolean;
 }
 
 export const sessionMiddleware = (options: SessionMiddlewareOptions): Middleware => {
   return async (ctx, next) => {
     let checkSession = false;
     const { pathname } = ctx.request.url;
+    if (options.ignoreCors === true && ctx.request.method.toLowerCase() === "options") {
+      return await next();
+    }
     if (options.includeStartsWith) {
       if (options.includeStartsWith.some((path) => pathname.startsWith(path))) {
         checkSession = true;

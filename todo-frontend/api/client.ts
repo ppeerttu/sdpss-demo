@@ -6,7 +6,22 @@ export class ApiClient {
   private client = axios.create({
     baseURL: config.apiUrl,
     timeout: 5000,
+    withCredentials: true,
   });
+
+  public getMe(): Promise<AppUser | null> {
+    return this.client
+      .get("/api/users/me")
+      .then((res) => res.data as AppUser)
+      .catch((err) => {
+        if (axios.isAxiosError(err)) {
+          if (err.response && err.response.status === 401) {
+            return null;
+          }
+        }
+        throw err;
+      });
+  }
 
   public signIn(username: string): Promise<AppUser> {
     return this.client.post("/auth/sign-in", { username }).then((res) => res.data as AppUser);

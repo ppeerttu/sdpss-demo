@@ -20,6 +20,7 @@ export interface AppState {
   user: AppUser | null;
   todos: Todo[];
   authPending: boolean;
+  getMe(): Promise<AppUser | null>;
   signIn(username: string): Promise<AppUser>;
   signOut(): Promise<void>;
   getTodos(): Promise<Todo[]>;
@@ -40,6 +41,18 @@ export function AppStateProvider({ children }) {
     user,
     todos,
     authPending,
+    getMe: () => {
+      setAuthPending(true);
+      return api
+        .getMe()
+        .then((user) => {
+          setUser(user);
+          return user;
+        })
+        .finally(() => {
+          setAuthPending(false);
+        });
+    },
     signIn: (username) => {
       setAuthPending(true);
       return api
