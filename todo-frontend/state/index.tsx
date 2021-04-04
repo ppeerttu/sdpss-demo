@@ -1,4 +1,4 @@
-import React, { useContext, useState } from "react";
+import React, { useCallback, useContext, useState } from "react";
 
 import { ApiClient } from "../api/client";
 
@@ -41,7 +41,7 @@ export function AppStateProvider({ children }) {
     user,
     todos,
     authPending,
-    getMe: () => {
+    getMe: useCallback(() => {
       setAuthPending(true);
       return api
         .getMe()
@@ -52,8 +52,8 @@ export function AppStateProvider({ children }) {
         .finally(() => {
           setAuthPending(false);
         });
-    },
-    signIn: (username) => {
+    }, []),
+    signIn: useCallback((username) => {
       setAuthPending(true);
       return api
         .signIn(username)
@@ -62,8 +62,8 @@ export function AppStateProvider({ children }) {
           return user;
         })
         .finally(() => setAuthPending(false));
-    },
-    signOut: () => {
+    }, []),
+    signOut: useCallback(() => {
       setAuthPending(true);
       return api
         .signOut()
@@ -71,30 +71,30 @@ export function AppStateProvider({ children }) {
           setUser(null);
         })
         .finally(() => setAuthPending(false));
-    },
-    getTodos: () => {
+    }, []),
+    getTodos: useCallback(() => {
       return api.getTodos().then((todos) => {
         setTodos(todos);
         return todos;
       });
-    },
-    postTodo: (description: string) => {
+    }, []),
+    postTodo: useCallback((description: string) => {
       return api.createTodo(description).then((todo) => {
         setTodos((todos) => [todo, ...todos]);
         return todo;
       });
-    },
-    deleteTodo: (todoId: string) => {
+    }, []),
+    deleteTodo: useCallback((todoId: string) => {
       return api.deleteTodo(todoId).then(() => {
         setTodos((todos) => todos.filter((t) => t.id !== todoId));
       });
-    },
-    completeTodo: (todoId: string, completed?: boolean) => {
+    }, []),
+    completeTodo: useCallback((todoId: string, completed?: boolean) => {
       return api.completeTodo(todoId, completed).then((todo) => {
         setTodos((todos) => todos.map((t) => (t.id === todo.id ? todo : t)));
         return todo;
       });
-    },
+    }, []),
   };
   return <AppContext.Provider value={state}>{children}</AppContext.Provider>;
 }

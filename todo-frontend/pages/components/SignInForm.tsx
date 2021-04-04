@@ -55,13 +55,16 @@ export const SignInForm: React.FC = () => {
   const onSubmit = useCallback(
     (e: any) => {
       e.preventDefault();
+      if (!formValid) {
+        return;
+      }
       setPending(true);
       signIn(username).catch((e) => {
         console.error(e);
         setPending(false);
       });
     },
-    [username, setPending, signIn]
+    [username, setPending, signIn, formValid]
   );
 
   return (

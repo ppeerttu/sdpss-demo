@@ -22,19 +22,22 @@ export const TodoInput: React.FC = () => {
   const [valid, setValid] = useState(false);
 
   useEffect(() => {
-    setValid(description.length > 3 && description.length <= 255);
+    setValid(description.length >= 3 && description.length <= 255);
   }, [setValid, description]);
 
   const onSubmit = useCallback(
     (e: any) => {
       e.preventDefault();
+      if (!valid) {
+        return;
+      }
       postTodo(description)
         .then(() => {
           setDescription("");
         })
         .catch(console.error);
     },
-    [description, setDescription, postTodo]
+    [description, setDescription, postTodo, valid]
   );
 
   return (

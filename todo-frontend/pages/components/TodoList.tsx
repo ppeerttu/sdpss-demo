@@ -1,27 +1,71 @@
 import React from "react";
 
-import { List, ListItem, ListItemIcon, ListItemText, makeStyles } from "@material-ui/core";
-import { CheckBox, CheckBoxOutlineBlank } from "@material-ui/icons";
+import {
+  Checkbox,
+  IconButton,
+  List,
+  ListItem,
+  ListItemIcon,
+  ListItemSecondaryAction,
+  ListItemText,
+  makeStyles,
+} from "@material-ui/core";
+import { Delete } from "@material-ui/icons";
 import { useAppState } from "../../state";
 
 const useStyles = makeStyles((theme) => ({
   root: {
     width: "100%",
     backgroundColor: theme.palette.background.paper,
+    marginTop: theme.spacing(2),
+    marginBottom: theme.spacing(2),
   },
 }));
 
 export const TodoList: React.FC = () => {
   const styles = useStyles();
-  const { todos } = useAppState();
+  const { todos, completeTodo, deleteTodo } = useAppState();
+
+  const onCompleteTodo = (todoId: string, completed = true) => () => {
+    completeTodo(todoId, completed).catch(console.error);
+  };
+
+  const onDeleteTodo = (todoId: string) => () => {
+    deleteTodo(todoId).catch(console.error);
+  };
+
   return (
     <div className={styles.root}>
       <List>
         {todos.length > 0 ? (
           todos.map(({ id, description, completed }) => (
-            <ListItem key={id} button>
-              <ListItemText primary={description} />
-              <ListItemIcon>{completed ? <CheckBox /> : <CheckBoxOutlineBlank />}</ListItemIcon>
+            <ListItem
+              key={id}
+              button
+              role={undefined}
+              dense
+              onClick={onCompleteTodo(id, !completed)}
+            >
+              <ListItemIcon>
+                <Checkbox
+                  edge="start"
+                  checked={completed}
+                  tabIndex={-1}
+                  disableRipple
+                  inputProps={{ "aria-labelledby": `todo-${id}` }}
+                />
+              </ListItemIcon>
+              <ListItemText id={`todo-${id}`} primary={description} />
+              <ListItemSecondaryAction>
+                <IconButton
+                  edge="end"
+                  aria-label="complete"
+                  onClick={onDeleteTodo(id)}
+                  color="secondary"
+                >
+                  <Delete />
+                </IconButton>
+              </ListItemSecondaryAction>
             </ListItem>
           ))
         ) : (
