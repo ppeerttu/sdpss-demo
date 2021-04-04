@@ -1,0 +1,34 @@
+import axios from "axios";
+import { config } from "../config";
+import { AppUser, Todo } from "../state";
+
+export class ApiClient {
+  private client = axios.create({
+    baseURL: config.apiUrl,
+    timeout: 5000,
+  });
+
+  public signIn(username: string): Promise<AppUser> {
+    return this.client.post("/auth/sign-in", { username }).then((res) => res.data as AppUser);
+  }
+
+  public async signOut(): Promise<void> {
+    await this.client.post("/auth/sign-out");
+  }
+
+  public getTodos(): Promise<Todo[]> {
+    return this.client.get("/api/todos").then((res) => res.data as Todo[]);
+  }
+
+  public completeTodo(todoId: string, completed = true): Promise<Todo> {
+    return this.client.put(`/api/todos/${todoId}`, { completed }).then((res) => res.data as Todo);
+  }
+
+  public createTodo(description: string): Promise<Todo> {
+    return this.client.post("/api/todos", { description }).then((res) => res.data as Todo);
+  }
+
+  public async deleteTodo(todoId: string): Promise<void> {
+    await this.client.delete(`/api/todos/${todoId}`);
+  }
+}

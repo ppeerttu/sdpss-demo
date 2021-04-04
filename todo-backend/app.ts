@@ -1,4 +1,4 @@
-import { Application } from "./deps.ts";
+import { Application, oakCors } from "./deps.ts";
 import { log } from "./lib/log.ts";
 
 import { router } from "./web/router.ts";
@@ -29,6 +29,9 @@ app.use(sessionMiddleware({
   excludeStartsWith: ["/auth"]
 }));
 
+app.use(oakCors({
+  origin: "http://localhost:3000"
+}));
 
 app.use(router.routes());
 app.use(router.allowedMethods());

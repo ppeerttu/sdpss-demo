@@ -1,7 +1,8 @@
-import Head from "next/head";
-import { Container, CssBaseline, makeStyles } from "@material-ui/core";
+import { Container, makeStyles } from "@material-ui/core";
 import { TodoInput } from "./components/TodoInput";
 import { TodoList } from "./components/TodoList";
+import { useAppState } from "../state";
+import { SignInForm } from "./components/SignInForm";
 
 const useStyles = makeStyles((theme) => ({
   paper: {
@@ -14,25 +15,19 @@ const useStyles = makeStyles((theme) => ({
 
 export default function Home() {
   const styles = useStyles();
+  const { user } = useAppState();
   return (
     <div>
-      <Head>
-        <title>Todos</title>
-        <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
-        <link rel="icon" href="/favicon.ico" />
-        <link
-          rel="stylesheet"
-          href="https://fonts.googleapis.com/css?family=Roboto:300,400,500,700&display=swap"
-        />
-      </Head>
-
       <Container component="main" maxWidth="xs">
-        <CssBaseline />
-        <div className={styles.paper}>
-          <h1>Todos</h1>
-          <TodoInput />
-          <TodoList />
-        </div>
+        {user ? (
+          <div className={styles.paper}>
+            <h1>Todos</h1>
+            <TodoInput />
+            <TodoList />
+          </div>
+        ) : (
+          <SignInForm />
+        )}
       </Container>
     </div>
   );
