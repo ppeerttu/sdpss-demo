@@ -1,23 +1,37 @@
+import React, { useEffect, useState } from "react";
+
 import { Container } from "@material-ui/core";
-import { useEffect } from "react";
+
 import { useAppState } from "../state";
 import { OverlaySpinner } from "./components/OverlaySpinner";
 import { SignInForm } from "./components/SignInForm";
 import { Todos } from "./components/Todos";
+import { SignOutBar } from "./components/SignOutBar";
 
 export default function Home() {
-  const { authPending, user, getMe } = useAppState();
+  const { user, getMe, signOut } = useAppState();
+  const [pending, setPending] = useState(false);
 
   useEffect(() => {
-    getMe().catch(console.error);
-  }, []);
+    setPending(true);
+    getMe()
+      .catch(console.error)
+      .finally(() => setPending(false));
+  }, [setPending, getMe]);
 
   return (
     <>
-      <OverlaySpinner render={authPending} />
+      <OverlaySpinner render={pending} />
       <div>
         <Container component="main" maxWidth="xs">
-          {user ? <Todos /> : <SignInForm />}
+          {user ? (
+            <>
+              <Todos />
+              <SignOutBar user={user} signOut={signOut} />
+            </>
+          ) : (
+            <SignInForm />
+          )}
         </Container>
       </div>
     </>

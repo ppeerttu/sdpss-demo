@@ -13,6 +13,7 @@ const useStyles = makeStyles({
     display: "flex",
     alignItems: "center",
     justifyContent: "center",
+    background: "rgba(255, 255, 255, 0.8)",
   },
 });
 

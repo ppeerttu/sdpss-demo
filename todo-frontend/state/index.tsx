@@ -19,7 +19,6 @@ export interface Todo {
 export interface AppState {
   user: AppUser | null;
   todos: Todo[];
-  authPending: boolean;
   getMe(): Promise<AppUser | null>;
   signIn(username: string): Promise<AppUser>;
   signOut(): Promise<void>;
@@ -35,42 +34,26 @@ const api = new ApiClient();
 export function AppStateProvider({ children }) {
   const [user, setUser] = useState<AppUser | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
-  const [authPending, setAuthPending] = useState(false);
 
   const state: AppState = {
     user,
     todos,
-    authPending,
     getMe: useCallback(() => {
-      setAuthPending(true);
-      return api
-        .getMe()
-        .then((user) => {
-          setUser(user);
-          return user;
-        })
-        .finally(() => {
-          setAuthPending(false);
-        });
+      return api.getMe().then((user) => {
+        setUser(user);
+        return user;
+      });
     }, []),
     signIn: useCallback((username) => {
-      setAuthPending(true);
-      return api
-        .signIn(username)
-        .then((user) => {
-          setUser(user);
-          return user;
-        })
-        .finally(() => setAuthPending(false));
+      return api.signIn(username).then((user) => {
+        setUser(user);
+        return user;
+      });
     }, []),
     signOut: useCallback(() => {
-      setAuthPending(true);
-      return api
-        .signOut()
-        .then(() => {
-          setUser(null);
-        })
-        .finally(() => setAuthPending(false));
+      return api.signOut().then(() => {
+        setUser(null);
+      });
     }, []),
     getTodos: useCallback(() => {
       return api.getTodos().then((todos) => {
