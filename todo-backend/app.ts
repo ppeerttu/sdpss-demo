@@ -3,6 +3,7 @@ import { log } from "./lib/log.ts";
 
 import { router } from "./web/router.ts";
 import { sessionMiddleware } from "./middleware/session.ts";
+import { serverConfig } from "./config/server.ts";
 
 const logger = log.getLogger();
 
@@ -25,14 +26,18 @@ app.use(async (ctx, next) => {
   }
 });
 
-app.use(oakCors({
-  origin: "http://localhost:3000",
-  credentials: true,
-}));
+
+
+if (serverConfig.cors.enabled) {
+  app.use(oakCors({
+    origin: serverConfig.cors.origin,
+    credentials: true,
+  }));
+}
 
 app.use(sessionMiddleware({
   excludeStartsWith: ["/auth"],
-  ignoreCors: true,
+  ignoreCors: serverConfig.cors.enabled,
 }));
 
 app.use(router.routes());
