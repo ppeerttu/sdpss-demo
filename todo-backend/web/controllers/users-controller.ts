@@ -21,7 +21,10 @@ export const authenticate: RouterMiddleware = async (ctx) => {
   const user = (await findUser(body.username)) ||
     (await createUser(body.username));
   ctx.response.body = user;
-  const session = createSession(user);
+  const session = createSession(
+    user,
+    new Date(Date.now() + authConfig.sessionDuration * 1000)
+  );
   ctx.cookies.set(authConfig.cookieKey, session.sessionId, {
     expires: session.expires,
     sameSite: true,

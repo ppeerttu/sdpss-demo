@@ -1,10 +1,6 @@
 import { uuidv4 } from "../deps.ts";
 import { PersistedUser } from "../models.ts";
 
-const HOUR = 1000 * 60 * 60;
-
-const SESSION_DURATION = HOUR * 2;
-
 export interface Session {
   /**
    * Username
@@ -54,13 +50,13 @@ export const getSession = (sessionId: string): Session | null => {
  * @param user User
  * @returns Created session
  */
-export const createSession = (user: PersistedUser): Session => {
+export const createSession = (user: PersistedUser, expires: Date): Session => {
   const session: Session = {
     userId: user.id,
     username: user.username,
     sessionId: uuidv4.generate(),
     authenticatedAt: new Date(),
-    expires: new Date(Date.now() + SESSION_DURATION)
+    expires,
   };
   sessionStore.set(session.sessionId, session);
   return session;
