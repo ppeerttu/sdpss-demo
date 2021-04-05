@@ -1,3 +1,32 @@
+# todo-frontend
+
+A simple Next.js app serving a SPA frontend for the todo demo app.
+
+## Getting started
+
+You'll need Node.js installed.
+
+1. Install the dependencies: `npm install`
+2. Start the dev server: `npm run dev`
+
+The local dev server will be available at [http://localhost:3000](http://localhost:3000). It is by default connecting to `http://localhost:8080`, but this is configurable via `API_URL` environment variable.
+
+## Building the docker image
+
+You can build the image simply by issuing for example:
+
+```bash
+# Default config (localhost)
+docker build todo-frontend:latest .
+
+# Configure backend API
+docker build --build-arg API_URL=https://api.mytodos.app todo-frontend:latest .
+```
+
+Original Next.js documentation below.
+
+----
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Getting Started
