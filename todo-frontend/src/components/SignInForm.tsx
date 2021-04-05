@@ -10,7 +10,7 @@ import {
   Typography,
 } from "@material-ui/core";
 import { LockOutlined } from "@material-ui/icons";
-import { useAppState } from "../../state";
+import { useAppState } from "../state";
 
 const useStyles = makeStyles((theme) => ({
   paper: {

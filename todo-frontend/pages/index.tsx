@@ -2,13 +2,13 @@ import React, { useEffect, useState } from "react";
 
 import { Container } from "@material-ui/core";
 
-import { useAppState } from "../state";
-import { OverlaySpinner } from "./components/OverlaySpinner";
-import { SignInForm } from "./components/SignInForm";
-import { Todos } from "./components/Todos";
-import { SignOutBar } from "./components/SignOutBar";
+import { useAppState } from "../src/state";
+import { OverlaySpinner } from "../src/components/OverlaySpinner";
+import { SignInForm } from "../src/components/SignInForm";
+import { Todos } from "../src/components/Todos";
+import { SignOutBar } from "../src/components/SignOutBar";
 
-export default function Home() {
+export default function Home(): JSX.Element {
   const { user, getMe, signOut } = useAppState();
   const [pending, setPending] = useState(false);
 

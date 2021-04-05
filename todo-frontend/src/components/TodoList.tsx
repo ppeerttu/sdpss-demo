@@ -11,7 +11,7 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
-import { useAppState } from "../../state";
+import { useAppState } from "../state";
 
 const useStyles = makeStyles((theme) => ({
   root: {

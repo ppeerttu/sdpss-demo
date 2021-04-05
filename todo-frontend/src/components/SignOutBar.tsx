@@ -2,7 +2,7 @@ import React from "react";
 
 import { Button, makeStyles, Typography } from "@material-ui/core";
 
-import { AppUser } from "../../state";
+import { AppUser } from "../state";
 
 const useStyles = makeStyles((theme) => ({
   root: {

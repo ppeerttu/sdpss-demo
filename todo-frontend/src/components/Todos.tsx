@@ -3,7 +3,7 @@ import React from "react";
 import { Avatar, makeStyles, Typography } from "@material-ui/core";
 import { TodoInput } from "./TodoInput";
 import { TodoList } from "./TodoList";
-import { useAppState } from "../../state";
+import { useAppState } from "../state";
 import { DoneOutline } from "@material-ui/icons";
 
 const useStyles = makeStyles((theme) => ({

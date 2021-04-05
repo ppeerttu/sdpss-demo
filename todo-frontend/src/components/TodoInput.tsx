@@ -1,7 +1,7 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { Button, makeStyles, TextField } from "@material-ui/core";
-import { useAppState } from "../../state";
+import { useAppState } from "../state";
 
 const useStyles = makeStyles((theme) => ({
   container: {
