@@ -1,10 +1,10 @@
-import { Middleware } from "../deps.ts";
+import { Middleware, uuidv4 } from "../deps.ts";
 import { authConfig } from "../config/auth.ts";
-import { getSession } from "../lib/session.ts";
+import { getSession } from "../repository.ts";
 
 export const requireSession: Middleware = async (ctx, next) => {
   const sid = ctx.cookies.get(authConfig.cookieKey);
-  const session = sid ? getSession(sid) : null;
+  const session = sid && uuidv4.validate(sid) ? await getSession(sid) : null;
   if (!session) {
     ctx.response.status = 401;
     ctx.response.body = { message: "Unauthorized" };

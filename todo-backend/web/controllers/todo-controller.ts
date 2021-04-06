@@ -1,7 +1,7 @@
 import { RouterMiddleware, RouteParams } from "../../deps.ts";
 import { listTodos, createTodo, deleteTodo as removeTodo, completeTodo } from "../../repository.ts";
 import { validate } from "../../lib/validator.ts";
-import { Session } from "../../lib/session.ts";
+import { Session } from "../../models.ts";
 import { log } from "../../lib/log.ts";
 
 const logger = log.getLogger();

@@ -22,7 +22,9 @@ app.use(async (ctx, next) => {
   try {
     await next();
   } catch (e) {
-    logger.error("Uncaught exception", e);
+    logger.error("Unexpected exception", e);
+    ctx.response.status = 500;
+    ctx.response.body = { message: "Unfortunately an internal server error occurred" };
   }
 });
 

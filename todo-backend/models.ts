@@ -32,6 +32,10 @@ export interface Todo {
    * Is the item completed?
    */
   completed: boolean;
+  /**
+   * User ID
+   */
+  userId: string;
 }
 
 /**
@@ -43,3 +47,27 @@ export type PersistedUser = User & Persistable;
  * Persisted todo entity
  */
 export type PersistedTodo = Todo & Updateable;
+
+export interface Session {
+  /**
+   * Session ID
+   */
+  id: string;
+  /**
+   * Username
+   */
+  username: string;
+  /**
+   * User ID
+   */
+  userId: string;
+  /**
+   * Created at -timestamp
+   */
+  createdAt: Date;
+  /**
+   * Expires at -timestamp
+   */
+  expiresAt: Date;
+}
+
