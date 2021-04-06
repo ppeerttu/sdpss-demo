@@ -15,5 +15,5 @@ router.get("/api/users/me", getMe);
 router.delete("/api/users/me", deleteMe);
 
 // Auth
-router.post("/auth/sign-in", authenticate);
-router.post("/auth/sign-out", signOut);
+router.post("/api/auth/sign-in", authenticate);
+router.post("/api/auth/sign-out", signOut);

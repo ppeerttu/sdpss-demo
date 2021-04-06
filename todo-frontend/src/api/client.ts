@@ -22,11 +22,11 @@ export class ApiClient {
   }
 
   public signIn(username: string): Promise<AppUser> {
-    return this.client.post("/auth/sign-in", { username }).then((res) => res.data as AppUser);
+    return this.client.post("/api/auth/sign-in", { username }).then((res) => res.data as AppUser);
   }
 
   public async signOut(): Promise<void> {
-    await this.client.post("/auth/sign-out");
+    await this.client.post("/api/auth/sign-out");
   }
 
   public getTodos(): Promise<Todo[]> {

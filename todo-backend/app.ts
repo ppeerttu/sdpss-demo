@@ -38,7 +38,7 @@ if (serverConfig.cors.enabled) {
 }
 
 app.use(sessionMiddleware({
-  excludeStartsWith: ["/auth"],
+  excludeStartsWith: ["/api/auth"],
   ignoreCors: serverConfig.cors.enabled,
 }));
 
