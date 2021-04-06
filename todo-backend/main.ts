@@ -6,7 +6,7 @@ import { log } from "./lib/log.ts";
 
 const logger = log.getLogger();
 
-cron("1 */1 * * * *", () => {
+cron("1 */10 * * * *", () => {
   clearExpiredSessions()
     .then((count) => {
       logger.info(`Ran the session store cleanup, removed ${count} sessions...`);

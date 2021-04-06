@@ -31,7 +31,7 @@ export interface AppState {
 const AppContext = React.createContext<AppState>(null);
 const api = new ApiClient();
 
-export function AppStateProvider({ children }) {
+export function AppStateProvider({ children }): JSX.Element {
   const [user, setUser] = useState<AppUser | null>(null);
   const [todos, setTodos] = useState<Todo[]>([]);
 

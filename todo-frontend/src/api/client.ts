@@ -1,10 +1,8 @@
 import axios from "axios";
-import { config } from "../config";
 import { AppUser, Todo } from "../state";
 
 export class ApiClient {
   private client = axios.create({
-    baseURL: config.apiUrl,
     timeout: 5000,
     withCredentials: true,
   });
