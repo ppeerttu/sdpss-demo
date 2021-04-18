@@ -1,22 +1,19 @@
 import { PersistedTodo, PersistedUser, Session } from "./models.ts";
-import { Client } from "./deps.ts";
+import { Client, connect } from "./deps.ts";
 import { connectionString } from "./config/database.ts";
+import { redisConfig } from "./config/redis.ts";
 
 export const client = new Client(connectionString);
 
 await client.connect();
+
+const redis = await connect(redisConfig);
 
 type UsersRow = Omit<PersistedUser, "createdAt"> & { created_at: Date };
 
 type TodosRow = Omit<PersistedTodo, "createdAt" | "updatedAt" | "userId"> & {
   created_at: Date;
   updated_at: Date;
-  user_id: string;
-};
-
-type SessionRow = Omit<Session, "createdAt" | "expiresAt" | "userId"> & {
-  created_at: Date;
-  expires_at: Date;
   user_id: string;
 };
 
@@ -34,13 +31,6 @@ const mapRowToTodo = (
   createdAt: created_at,
   updatedAt: updated_at,
   userId: user_id,
-});
-
-const mapRowToSession = ({ created_at, expires_at, user_id, ...rest }: SessionRow): Session => ({
-  userId: user_id,
-  createdAt: created_at,
-  expiresAt: expires_at,
-  ...rest
 });
 
 // Todos
@@ -104,30 +94,32 @@ export const deleteUser = async (userId: string): Promise<void> => {
 
 // Sessions
 
-export const createSession = async (userId: string, expiresAt: Date): Promise<Session> => {
-  const res = await client.queryObject<SessionRow>`
-    WITH inserted AS (
-      INSERT INTO sessions
-        (user_id, expires_at, created_at) VALUES (${userId}, ${expiresAt}, CURRENT_TIMESTAMP)
-        RETURNING *)
-    SELECT inserted.*, u.username FROM inserted, users u WHERE u.id = inserted.user_id
-      `;
-  return res.rows.map(mapRowToSession)[0];
+export const createSession = async (session: Session): Promise<Session> => {
+  const timeoutMs = session.expiresAt.getTime() - Date.now();
+  await redis.set(`session:${session.id}`, JSON.stringify(session), { px: timeoutMs });
+  return session;
 }
 
-export const getSession = async (sessionId: string, now = new Date()): Promise<Session | null> => {
-  const res = await client.queryObject<SessionRow>`
-    SELECT s.*, u.username FROM sessions s, users u WHERE s.id = ${sessionId} AND s.expires_at > ${now} AND u.id = s.user_id
-  `;
-  return res.rows.length === 1 ? res.rows.map(mapRowToSession)[0] : null;
+export const getSession = async (sessionId: string): Promise<Session | null> => {
+  const session = await redis.get(`session:${sessionId}`);
+  return session ? deserializeSession(session) : null;
 }
 
 export const deleteSession = async (sessionId: string): Promise<boolean> => {
-  const res = await client.queryObject`DELETE FROM sessions WHERE id = ${sessionId}`;
-  return res.rowCount === 1;
+  const count = await redis.del(`session:${sessionId}`);
+  return count > 0;
 }
 
-export const clearExpiredSessions = async (olderThanTimestamp = new Date()): Promise<number> => {
-  const res = await client.queryObject`DELETE FROM sessions WHERE expires_at < ${olderThanTimestamp}`;
-  return res.rowCount as number;
+export const healthCheck = async (): Promise<void> => {
+  await redis.ping();
+  await client.queryObject`SELECT 1 + 1;`;
+}
+
+function deserializeSession(session: string): Session {
+  const deserialized = JSON.parse(session) as Session;
+  return {
+    ...deserialized,
+    expiresAt: new Date(deserialized.expiresAt),
+    createdAt: new Date(deserialized.createdAt),
+  };
 }

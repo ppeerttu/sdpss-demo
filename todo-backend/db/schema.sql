@@ -37,18 +37,6 @@ CREATE TABLE public.schema_migrations (
 
 
 --
--- Name: sessions; Type: TABLE; Schema: public; Owner: -
---
-
-CREATE TABLE public.sessions (
-    id uuid DEFAULT public.uuid_generate_v4() NOT NULL,
-    user_id uuid NOT NULL,
-    expires_at timestamp with time zone NOT NULL,
-    created_at timestamp with time zone NOT NULL
-);
-
-
---
 -- Name: todos; Type: TABLE; Schema: public; Owner: -
 --
 
@@ -82,14 +70,6 @@ ALTER TABLE ONLY public.schema_migrations
 
 
 --
--- Name: sessions sessions_pkey; Type: CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_pkey PRIMARY KEY (id);
-
-
---
 -- Name: todos todos_pkey; Type: CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -114,14 +94,6 @@ ALTER TABLE ONLY public.users
 
 
 --
--- Name: sessions sessions_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
---
-
-ALTER TABLE ONLY public.sessions
-    ADD CONSTRAINT sessions_user_id_fkey FOREIGN KEY (user_id) REFERENCES public.users(id) ON DELETE CASCADE;
-
-
---
 -- Name: todos todos_user_id_fkey; Type: FK CONSTRAINT; Schema: public; Owner: -
 --
 
@@ -140,5 +112,4 @@ ALTER TABLE ONLY public.todos
 
 INSERT INTO public.schema_migrations (version) VALUES
     ('20210401065857'),
-    ('20210401090119'),
-    ('20210406051353');
+    ('20210401090119');

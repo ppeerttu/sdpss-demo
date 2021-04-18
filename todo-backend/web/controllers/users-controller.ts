@@ -1,4 +1,4 @@
-import { RouterMiddleware, RouteParams } from "../../deps.ts";
+import { RouterMiddleware, RouteParams, uuidv4 } from "../../deps.ts";
 import { createUser, findUser, listUsers, deleteUser, createSession, deleteSession } from "../../repository.ts";
 import { validate } from "../../lib/validator.ts";
 import { authConfig } from "../../config/auth.ts";
@@ -20,10 +20,14 @@ export const authenticate: RouterMiddleware = async (ctx) => {
   const user = (await findUser(body.username)) ||
     (await createUser(body.username));
   ctx.response.body = user;
-  const session = await createSession(
-    user.id,
-    new Date(Date.now() + authConfig.sessionDuration * 1000)
-  );
+  const session: Session = {
+    id: uuidv4.generate(),
+    userId: user.id,
+    username: user.username,
+    createdAt: new Date(),
+    expiresAt: new Date(Date.now() + authConfig.sessionDuration * 1000)
+  };
+  await createSession(session);
   ctx.cookies.set(authConfig.cookieKey, session.id, {
     expires: session.expiresAt,
     sameSite: true,
