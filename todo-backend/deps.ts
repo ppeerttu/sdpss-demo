@@ -2,7 +2,7 @@
 * We re-export all dependencies from here so the other project files
 * won't have to deal with external sources directly.
 */
-export { Application, Router,  } from "https://deno.land/x/oak@v6.5.0/mod.ts";
+export { Application, Router, } from "https://deno.land/x/oak@v6.5.0/mod.ts";
 export type {
   RouterContext,
   RouterMiddleware,

@@ -33,6 +33,14 @@ const mapRowToTodo = (
   userId: user_id,
 });
 
+/**
+ * Check the health of the persistence storages.
+ */
+export const healthCheck = async (): Promise<void> => {
+  await redis.ping();
+  await client.queryObject`SELECT 1 + 1;`;
+}
+
 // Todos
 
 export const listTodos = async (userId?: string): Promise<PersistedTodo[]> => {
@@ -108,11 +116,6 @@ export const getSession = async (sessionId: string): Promise<Session | null> => 
 export const deleteSession = async (sessionId: string): Promise<boolean> => {
   const count = await redis.del(`session:${sessionId}`);
   return count > 0;
-}
-
-export const healthCheck = async (): Promise<void> => {
-  await redis.ping();
-  await client.queryObject`SELECT 1 + 1;`;
 }
 
 function deserializeSession(session: string): Session {

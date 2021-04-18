@@ -1,6 +1,6 @@
 import { Application, oakCors } from "./deps.ts";
+import { healthCheck } from "./repository.ts";
 import { log } from "./lib/log.ts";
-
 import { router } from "./web/router.ts";
 import { sessionMiddleware } from "./middleware/session.ts";
 import { serverConfig } from "./config/server.ts";
@@ -29,7 +29,6 @@ app.use(async (ctx, next) => {
 });
 
 
-
 if (serverConfig.cors.enabled) {
   app.use(oakCors({
     origin: serverConfig.cors.origin,
@@ -41,6 +40,11 @@ app.use(sessionMiddleware({
   excludeStartsWith: ["/api/auth"],
   ignoreCors: serverConfig.cors.enabled,
 }));
+
+router.get("/api/health", async (ctx) => {
+  await healthCheck();
+  ctx.response.status = 204;
+});
 
 app.use(router.routes());
 app.use(router.allowedMethods());
