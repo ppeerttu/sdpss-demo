@@ -2,6 +2,7 @@ import React from "react";
 
 import {
   Checkbox,
+  Divider,
   IconButton,
   List,
   ListItem,
@@ -11,7 +12,8 @@ import {
   makeStyles,
 } from "@material-ui/core";
 import { Delete } from "@material-ui/icons";
-import { useAppState } from "../state";
+import { Todo, useAppState } from "../state";
+import { formatDistanceToNow, parseISO } from "date-fns";
 
 const useStyles = makeStyles((theme) => ({
   root: {
@@ -22,59 +24,84 @@ const useStyles = makeStyles((theme) => ({
   },
 }));
 
+interface TodosProps {
+  todos: Todo[];
+  onComplete: (todoId: string, completed?: boolean) => void;
+  onDelete: (todoId: string) => void;
+  emptyText?: string;
+}
+
+const Todos: React.FC<TodosProps> = ({ todos, onComplete, onDelete, emptyText }) => {
+  return (
+    <List>
+      {todos.length > 0 ? (
+        todos.map(({ id, description, completed, deadline }) => (
+          <ListItem
+            key={id}
+            button
+            role={undefined}
+            dense
+            onClick={() => onComplete(id, !completed)}
+          >
+            <ListItemIcon>
+              <Checkbox
+                edge="start"
+                checked={completed}
+                tabIndex={-1}
+                disableRipple
+                inputProps={{ "aria-labelledby": `todo-${id}` }}
+              />
+            </ListItemIcon>
+            <ListItemText
+              id={`todo-${id}`}
+              primary={description}
+              secondary={
+                deadline ? formatDistanceToNow(parseISO(deadline), { addSuffix: true }) : undefined
+              }
+            />
+            <ListItemSecondaryAction>
+              <IconButton
+                edge="end"
+                aria-label="complete"
+                onClick={() => onDelete(id)}
+                color="secondary"
+              >
+                <Delete />
+              </IconButton>
+            </ListItemSecondaryAction>
+          </ListItem>
+        ))
+      ) : (
+        <ListItem>
+          <ListItemText primary={emptyText || "No todos yet"} />
+        </ListItem>
+      )}
+    </List>
+  );
+};
+
 export const TodoList: React.FC = () => {
   const styles = useStyles();
-  const { todos, completeTodo, deleteTodo } = useAppState();
+  const { todos, completedTodos, completeTodo, deleteTodo } = useAppState();
 
-  const onCompleteTodo = (todoId: string, completed = true) => () => {
+  const onCompleteTodo = (todoId: string, completed = true) => {
     completeTodo(todoId, completed).catch(console.error);
   };
 
-  const onDeleteTodo = (todoId: string) => () => {
+  const onDeleteTodo = (todoId: string) => {
     deleteTodo(todoId).catch(console.error);
   };
 
   return (
     <div className={styles.root}>
-      <List>
-        {todos.length > 0 ? (
-          todos.map(({ id, description, completed }) => (
-            <ListItem
-              key={id}
-              button
-              role={undefined}
-              dense
-              onClick={onCompleteTodo(id, !completed)}
-            >
-              <ListItemIcon>
-                <Checkbox
-                  edge="start"
-                  checked={completed}
-                  tabIndex={-1}
-                  disableRipple
-                  inputProps={{ "aria-labelledby": `todo-${id}` }}
-                />
-              </ListItemIcon>
-              <ListItemText id={`todo-${id}`} primary={description} />
-              <ListItemSecondaryAction>
-                <IconButton
-                  edge="end"
-                  aria-label="complete"
-                  onClick={onDeleteTodo(id)}
-                  color="secondary"
-                >
-                  <Delete />
-                </IconButton>
-              </ListItemSecondaryAction>
-            </ListItem>
-          ))
-        ) : (
-          <ListItem>
-            <ListItemText primary="No todos yet" />
-          </ListItem>
-        )}
-        {}
-      </List>
+      <Todos todos={todos} onComplete={onCompleteTodo} onDelete={onDeleteTodo} />
+      <Divider />
+      <Todos
+        todos={completedTodos}
+        onComplete={onCompleteTodo}
+        onDelete={onDeleteTodo}
+        emptyText="No completed todos yet"
+      />
     </div>
   );
 };

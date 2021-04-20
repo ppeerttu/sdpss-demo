@@ -36,6 +36,10 @@ export interface Todo {
    * User ID
    */
   userId: string;
+  /**
+   * Deadline of the todo
+   */
+  deadline: Date | null;
 }
 
 /**

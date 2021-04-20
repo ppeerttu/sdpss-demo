@@ -53,9 +53,11 @@ export const listTodos = async (userId?: string): Promise<PersistedTodo[]> => {
   return res.rows.map(mapRowToTodo);
 };
 
-export const createTodo = async (description: string, userId: string): Promise<PersistedTodo> => {
+export const createTodo = async (description: string, userId: string, deadline: Date | null = null): Promise<PersistedTodo> => {
   const res = await client.queryObject<TodosRow>`
-    INSERT INTO todos (created_at, updated_at, description, user_id) VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ${description}, ${userId}) RETURNING *
+    INSERT INTO todos (created_at, updated_at, description, user_id, deadline)
+      VALUES (CURRENT_TIMESTAMP, CURRENT_TIMESTAMP, ${description}, ${userId}, ${deadline})
+      RETURNING *
   `;
   return res.rows.map(mapRowToTodo)[0];
 }

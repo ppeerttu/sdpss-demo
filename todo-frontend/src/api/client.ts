@@ -37,11 +37,17 @@ export class ApiClient {
     return this.client.put(`/api/todos/${todoId}`, { completed }).then((res) => res.data as Todo);
   }
 
-  public createTodo(description: string): Promise<Todo> {
-    return this.client.post("/api/todos", { description }).then((res) => res.data as Todo);
+  public createTodo(description: string, deadline: Date | null = null): Promise<Todo> {
+    return this.client
+      .post("/api/todos", { description, deadline })
+      .then((res) => res.data as Todo);
   }
 
   public async deleteTodo(todoId: string): Promise<void> {
     await this.client.delete(`/api/todos/${todoId}`);
+  }
+
+  public deleteMe(): Promise<void> {
+    return this.client.delete("/api/users/me");
   }
 }

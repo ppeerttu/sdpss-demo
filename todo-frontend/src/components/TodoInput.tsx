@@ -1,13 +1,21 @@
 import React, { useCallback, useEffect, useState } from "react";
 
 import { Button, makeStyles, TextField } from "@material-ui/core";
+import { DateTimePicker } from "@material-ui/pickers";
+
 import { useAppState } from "../state";
 
 const useStyles = makeStyles((theme) => ({
-  container: {
+  row: {
+    marginTop: theme.spacing(2),
     display: "flex",
     width: "100%",
     flexDirection: "row",
+  },
+  container: {
+    display: "flex",
+    width: "100%",
+    flexDirection: "column",
   },
   inputContainer: {
     flexGrow: 1,
@@ -20,6 +28,7 @@ export const TodoInput: React.FC = () => {
   const { postTodo } = useAppState();
   const [description, setDescription] = useState("");
   const [valid, setValid] = useState(false);
+  const [deadline, setDeadline] = useState<Date | null>(null);
 
   useEffect(() => {
     setValid(description.length >= 3 && description.length <= 255);
@@ -31,18 +40,18 @@ export const TodoInput: React.FC = () => {
       if (!valid) {
         return;
       }
-      postTodo(description)
+      postTodo(description, deadline)
         .then(() => {
           setDescription("");
         })
         .catch(console.error);
     },
-    [description, setDescription, postTodo, valid]
+    [description, setDescription, postTodo, valid, deadline]
   );
 
   return (
     <form noValidate autoComplete="off" className={styles.container} onSubmit={onSubmit}>
-      <div className={styles.inputContainer}>
+      <div className={styles.row}>
         <TextField
           id="description"
           name="description"
@@ -54,9 +63,21 @@ export const TodoInput: React.FC = () => {
           onChange={(e) => setDescription(e.target.value)}
         />
       </div>
-      <Button type="submit" variant="contained" color="primary" disabled={!valid}>
-        Add
-      </Button>
+      <div className={styles.row}>
+        <div className={styles.inputContainer}>
+          <DateTimePicker
+            inputVariant="outlined"
+            emptyLabel="Deadline"
+            disablePast
+            value={deadline}
+            onChange={setDeadline}
+            fullWidth
+          />
+        </div>
+        <Button type="submit" variant="contained" color="primary" disabled={!valid}>
+          Add
+        </Button>
+      </div>
     </form>
   );
 };

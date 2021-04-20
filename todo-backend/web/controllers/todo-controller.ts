@@ -1,4 +1,4 @@
-import { RouterMiddleware, RouteParams } from "../../deps.ts";
+import { RouterMiddleware, RouteParams, parse } from "../../deps.ts";
 import { listTodos, createTodo, deleteTodo as removeTodo, completeTodo } from "../../repository.ts";
 import { validate } from "../../lib/validator.ts";
 import { Session } from "../../models.ts";
@@ -12,14 +12,15 @@ export const getTodos: RouterMiddleware<RouteParams, { session: Session }> = asy
 };
 
 export const postTodo: RouterMiddleware<RouteParams, { session: Session }> = async (ctx) => {
-  const valid = await validate(ctx, [{ key: "description", type: "string" }]);
+  const valid = await validate(ctx, [{ key: "description", type: "string"}, { key: "deadline", type: "string", optional: true }]);
   if (!valid) {
     ctx.response.status = 422;
     ctx.response.body = { "error": "Unprocessable entity" };
     return;
   }
   const body = await ctx.request.body({ type: "json" }).value;
-  const todo = await createTodo(body.description, ctx.state.session.userId);
+  const deadline = body.deadline ? parse(body.deadline, "yyyy-MM-ddTHH:mm:ss.SSSZ") : null;
+  const todo = await createTodo(body.description, ctx.state.session.userId, deadline);
   ctx.response.status = 201;
   ctx.response.body = todo;
 }

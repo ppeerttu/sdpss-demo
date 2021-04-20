@@ -47,7 +47,7 @@ services:
   todo-dbmate:
     container_name: todo-dbmate-dev
     image: amacneil/dbmate
-    command: --wait --wait-timeout=15s rollback
+    command: --wait --wait-timeout=15s up
     volumes:
       - ./db:/db
     depends_on:

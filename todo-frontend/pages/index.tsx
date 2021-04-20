@@ -9,7 +9,7 @@ import { Todos } from "../src/components/Todos";
 import { SignOutBar } from "../src/components/SignOutBar";
 
 export default function Home(): JSX.Element {
-  const { user, getMe, signOut } = useAppState();
+  const { user, getMe, signOut, deleteMe } = useAppState();
   const [pending, setPending] = useState(false);
 
   useEffect(() => {
@@ -27,7 +27,7 @@ export default function Home(): JSX.Element {
           {user ? (
             <>
               <Todos />
-              <SignOutBar user={user} signOut={signOut} />
+              <SignOutBar user={user} signOut={signOut} deleteAccount={deleteMe} />
             </>
           ) : (
             <SignInForm />

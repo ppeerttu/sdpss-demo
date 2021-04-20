@@ -46,7 +46,8 @@ CREATE TABLE public.todos (
     completed boolean DEFAULT false NOT NULL,
     user_id uuid NOT NULL,
     updated_at timestamp with time zone NOT NULL,
-    created_at timestamp with time zone NOT NULL
+    created_at timestamp with time zone NOT NULL,
+    deadline timestamp with time zone
 );
 
 
@@ -112,4 +113,5 @@ ALTER TABLE ONLY public.todos
 
 INSERT INTO public.schema_migrations (version) VALUES
     ('20210401065857'),
-    ('20210401090119');
+    ('20210401090119'),
+    ('20210420101552');

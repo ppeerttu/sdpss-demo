@@ -2,7 +2,10 @@ import React from "react";
 
 import { CssBaseline } from "@material-ui/core";
 import { ThemeProvider } from "@material-ui/styles";
+import { MuiPickersUtilsProvider } from "@material-ui/pickers";
+import DateFnsUtils from "@date-io/date-fns";
 import Head from "next/head";
+
 import { AppStateProvider } from "../src/state";
 import theme from "../src/theme";
 
@@ -22,10 +25,12 @@ function MyApp({ Component, pageProps }): JSX.Element {
         <meta name="viewport" content="minimum-scale=1, initial-scale=1, width=device-width" />
       </Head>
       <ThemeProvider theme={theme}>
-        <CssBaseline />
-        <AppStateProvider>
-          <Component {...pageProps} />
-        </AppStateProvider>
+        <MuiPickersUtilsProvider utils={DateFnsUtils}>
+          <CssBaseline />
+          <AppStateProvider>
+            <Component {...pageProps} />
+          </AppStateProvider>
+        </MuiPickersUtilsProvider>
       </ThemeProvider>
     </>
   );

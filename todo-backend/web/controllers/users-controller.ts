@@ -57,6 +57,11 @@ export const getMe: RouterMiddleware<RouteParams, { session: Session; }> = async
 
 export const deleteMe: RouterMiddleware<RouteParams, { session: Session; }> = async (ctx) => {
   const userId = ctx.state.session.userId;
+  const sid = ctx.cookies.get(authConfig.cookieKey);
+  if (sid) {
+    // Ignore the result for now
+    await deleteSession(sid);
+  }
   await deleteUser(userId);
   ctx.response.status = 204;
   ctx.cookies.delete(authConfig.cookieKey);
