@@ -43,7 +43,18 @@ export function AppStateProvider({ children }): JSX.Element {
   useEffect(() => {
     const [nonCompleted, completed] = zipArray(allTodos, (t) => t.completed);
 
-    const sortFn = (a: Todo, b: Todo) => (a.updatedAt < b.updatedAt ? -1 : 1);
+    const sortFn = (a: Todo, b: Todo) => {
+      if (a.deadline && b.deadline) {
+        return a.deadline < b.deadline ? -1 : 1;
+      }
+      if (a.deadline) {
+        return -1;
+      }
+      if (b.deadline) {
+        return 1;
+      }
+      return a.updatedAt < b.updatedAt ? -1 : 1;
+    };
 
     setTodos(nonCompleted.sort(sortFn));
     setCompletedTodos(completed.sort(sortFn));

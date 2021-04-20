@@ -1,12 +1,10 @@
 FROM node:14-alpine as build
 
-ARG API_URL="http://localhost:8080"
-
 WORKDIR /src/app
 
 COPY . .
 
-RUN npm install && API_URL=${API_URL} npm run build
+RUN npm install && npm run build
 
 RUN npm prune --production
 

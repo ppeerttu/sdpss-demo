@@ -1,4 +1,4 @@
-import { RouterMiddleware, RouteParams, parse } from "../../deps.ts";
+import { RouterMiddleware, RouteParams } from "../../deps.ts";
 import { listTodos, createTodo, deleteTodo as removeTodo, completeTodo } from "../../repository.ts";
 import { validate } from "../../lib/validator.ts";
 import { Session } from "../../models.ts";
@@ -19,7 +19,10 @@ export const postTodo: RouterMiddleware<RouteParams, { session: Session }> = asy
     return;
   }
   const body = await ctx.request.body({ type: "json" }).value;
-  const deadline = body.deadline ? parse(body.deadline, "yyyy-MM-ddTHH:mm:ss.SSSZ") : null;
+  // TODO: This is kind of dangerous. The 'deadline' should be validated first - this method does not
+  // handle invalid formats.
+  const deadline = body.deadline ? new Date(body.deadline) : null;
+  logger.info(`Deadline: ${deadline}, body: ${JSON.stringify(body, null, 4)}`)
   const todo = await createTodo(body.description, ctx.state.session.userId, deadline);
   ctx.response.status = 201;
   ctx.response.body = todo;

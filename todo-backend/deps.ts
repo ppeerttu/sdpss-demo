@@ -14,4 +14,3 @@ export { Client } from "https://deno.land/x/postgres@@v0.8.0/mod.ts";
 export { v4 as uuidv4 } from "https://deno.land/std@0.91.0/uuid/mod.ts";
 export { oakCors } from "https://deno.land/x/cors@v1.2.1/mod.ts";
 export { connect } from "https://deno.land/x/redis@v0.22.0/mod.ts";
-export { parse } from "https://deno.land/std@0.91.0/datetime/mod.ts";

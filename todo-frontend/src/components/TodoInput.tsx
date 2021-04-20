@@ -43,6 +43,7 @@ export const TodoInput: React.FC = () => {
       postTodo(description, deadline)
         .then(() => {
           setDescription("");
+          setDeadline(null);
         })
         .catch(console.error);
     },
